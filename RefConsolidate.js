@@ -585,15 +585,20 @@ var refcon = {
 		// Go through the textPart and find the template's end code '}}'
 		// @todo: could use ProveIt's alternative code here
 		for ( i = 2; i < nextTemplateIndex; i++ ) {
-			if (textPart.charAt(i) === "{" && prevChar === "{")
+			if (textPart.charAt(i) === "{" && prevChar === "{") {
 				++depth;
-			if (textPart.charAt(i) === "}" && prevChar === "}")
+				prevChar = '';  // reset prevChar to avoid double counting for '{{{{'
+			} else if (textPart.charAt(i) === "}" && prevChar === "}") {
 				--depth;
+				prevChar = '';  // reset prevChar to avoid double counting for '}}}}'
+			} else {
+				prevChar = textPart.charAt(i);
+			}
+			
 			if (depth === 0) {
 				templateEndIndex = i + 1;
 				break;
 			}
-			prevChar = textPart.charAt(i);
 		}
 
 		// If templateEndIndex is 0, reference template's ending '}}' is missing in the textPart
